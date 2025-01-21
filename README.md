@@ -26,6 +26,7 @@ This is the profile page.
 ![image](https://github.com/user-attachments/assets/c25cc60f-a45d-4782-98da-a1acde9a0c65)
 
 The following pictures will be on mobile.
+
 ![image](https://github.com/user-attachments/assets/f00bd7fd-aaa2-40cd-ae74-d283a18fa941)
 
 ![image](https://github.com/user-attachments/assets/583c0419-4157-4c6f-92a6-ffb6b7ba1d5f)
@@ -35,4 +36,5 @@ The following pictures will be on mobile.
 ![image](https://github.com/user-attachments/assets/976fe1a5-e4c6-41c4-8cc3-065bd6d4dba0)
 
 The navigation bar.
+
 ![image](https://github.com/user-attachments/assets/421ea1c1-2390-4632-8f29-13f7144d90dc)
