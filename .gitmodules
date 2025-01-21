@@ -1,0 +1,6 @@
+[submodule "StudyTrackerBackend"]
+	path = StudyTrackerBackend
+	url = https://github.com/AurelienEbeng/StudyTrackerBackend
+[submodule "StudyTrackerFrontend"]
+	path = StudyTrackerFrontend
+	url = https://github.com/AurelienEbeng/StudyTrackerFrontend
