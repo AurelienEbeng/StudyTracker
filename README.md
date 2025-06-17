@@ -1,4 +1,38 @@
-I built the app to track the hours I spend studying. I have been using a word file to this. I would create a table at the end of document and fill it as the week goes by. The document is now very long. I also do not like having to add the hours for the day and week manually. Lastly, I wanted to have a project for my portfolio built with Java backend. 
+# Functional Requirements
+
+
+## User Authentication & Account Management
+- Users must be able to register and log in using an email and password.
+- Users must be able to reset their password if forgotten.
+- Users must be able to log out of the system.
+- Users must be able to view their profile.
+
+<br>
+
+## Task & Session Management
+- Users must be able to create and update tasks.
+- Users must be able to create and delete study sessions.
+- Users must be able to view all sessions associated with a specific task.
+
+<br>
+
+## Study Time Tracking
+- The system must record the amount of time a user studies each day.
+- The system must record the amount of time a user studies each week.
+- The system must prevent users from saving study time for future dates.
+
+<br>
+
+## Analytics & Reporting
+- Users must be able to view the total time spent studying across all tasks.
+- Users must be able to view the total study time for:
+    - The current day
+    - The current week
+    - The previous week
+
+  <br>
+    
+# Pictures
 
 The following pictures will be on desktop.
 
