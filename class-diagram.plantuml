@@ -1,0 +1,179 @@
+@startuml class-diagram
+skinparam classAttributeIconSize 0
+class LocalDateAttributeConverter implements AttributeConverter{
+    + convertToDatabaseColumn(LocalDate) : Date
+    + convertToEntityAttribute(Date) : LocalDate
+}
+
+class LocalDateTimeAttributeConverter implements AttributeConverter{
+    + convertToDatabaseColumn(LocalDateTime) : Timestamp
+    + convertToEntityAttribute(Timestamp) : LocalDateTime
+}
+
+
+
+class AuthenticationController{
+    - authenticationService: AuthenticationService
+    __
+    + AuthenticationController(AuthenticationService)
+    + register(User): ResponseEntity<String>
+    + registerUser(User): ResponseEntity<String>
+    + registerDemoUser(User): ResponseEntity<String>
+    + authenticate(AuthenticationRequest): ResponseEntity<AuthenticationResponse>
+    + verifyUser(VerifyUserRequest): ResponseEntity<?>
+    + resendVerificationCode(String) : ResponseEntity<?>
+    + forgotPassword(String): ResponseEntity<?>
+    + resetPassword(PasswordResetRequest): ResponseEntity<?>
+}
+
+AuthenticationController o-- AuthenticationService
+
+class AuthenticationRequest{
+    - email: String
+    - password: String
+    __
+    + getEmail(): String
+    + setEmail(String)
+    + getPassword(): String
+    + setPassword(String)
+}
+
+class AuthenticationResponse{
+    - jwt: String
+    - userId: Long
+    - username: String
+    __
+    + AuthenticationResponse(String, Long, String)
+    + getJwt(): String
+    + setJwt(String)
+    + getUserId(): Long
+    + setUserId(Long)
+    + getUsername(): String
+    + setUsername(String)
+}
+
+class AuthenticationService{
+    - passwordEncoder: PasswordEncoder 
+    - emailService: EmailService
+    - authenticationManager: AuthenticationManager
+    - userRepository: UserRepository
+    - jwtService: JwtService
+    - tokenRepository: PasswordTokenRepository
+    __
+    + AuthenticationService(PasswordEncoder, EmailService)
+    + register(User): String
+    + registerUser(User): String
+    + registerDemoUser(User): String
+    + login(AuthenticationRequest): AuthenticationResponse
+    - generateExtraClaims(User): Map<String, Object>
+    + verifyUser(VerifyUserRequest)
+    + resendVerificationCode(String)
+    + sendVerificationEmail(User)
+    - generateVerificationCode(): String
+    + forgotPassord(String): String
+    + sendForgotPasswordEmail(User)
+    + generateResetToken(User user): String
+    + resetPassword(PasswordResetRequest):  String
+    + hasExpired(LocalDateTime): boolean
+}
+
+AuthenticationService o-- PasswordEncoder
+AuthenticationService o-- EmailService
+
+class PasswordResetRequest{
+    - email: String
+    - password: String
+    - confirmPassword: String
+    - token: String
+    __
+    + getEmail(): String
+    + getPassword(): String
+    + getConfirmPassword(): String
+    + getToken(): String
+}
+
+class PasswordResetToken{
+    - id: int
+    - token: String
+    - expiryDateTime: LocalDateTime
+    - user: User
+    __
+    + getId(): int
+    + setId(int)
+    + getToken(): String
+    + setToken(String)
+    + getExpiryDateTime(): LocalDateTime
+    + setExpiryDateTime(LocalDateTime)
+    + getUser(): User
+    + setUser(User)
+}
+
+interface PasswordTokenRepository extends JpaRepository{
+    + findByToken(String): Optional<PasswordResetToken>
+    + findByUserId(Long): Optional<PasswordResetToken>
+    + delete(PasswordResetToken)
+}
+
+class VerifyUserRequest{
+    - email: String
+    - verificationCode: String
+    __
+    + getEmail(): String
+    + setEmail(String)
+    + getVerificationCode(): String
+    + setVerificationCode(String)
+}
+
+class JwtAuthenticationFilter extends OncePerRequestFilter{
+    - jwtService: JwtService
+    - userRepository: UserRepository
+    __
+    # doFilterInternal(HttpServletRequest, HttpServletResponse, FilterChain)
+}
+
+class JwtService{
+    - EXPIRATION_MINUTES: long
+    - SECRET_KEY: String
+    __
+    + generateToken(User, Map<String, Object>)
+    - generateKey(): Key
+    + extractEmail(String): String
+    - extractAllClaims(String jwt): Claims
+}
+
+class SecurityBeansInjector{
+    - userRepository: UserRepository
+    __
+    + authenticationManager(AuthenticationConfiguration): AuthenticationManager
+    + authenticationProvider(): AuthenticationProvider
+    + passwordEncoder(): PasswordEncoder
+    + userDetailsService(): UserDetailsService
+}
+
+class SecurityFilter{
+     - authenticationProvider: AuthenticationProvider
+    - jwtAuthenticationFilter: JwtAuthenticationFilter
+    __
+    + securityFilterChain(HttpSecurity): SecurityFilterChain
+}
+
+class WebConfig{
+    - {static} CORS_FILTER_ORDER: int
+    __
+    + corsFilter(): FilterRegistrationBean
+}
+
+class Email{
+    - to: String
+    - subject: String
+    - text: String
+    __
+    + getTo(): String
+    + setTo(String)
+    + getSubject(): String
+    + setSubject(String)
+    + getText(): String
+    + setText(String)
+}
+
+@enduml
