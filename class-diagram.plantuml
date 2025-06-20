@@ -13,7 +13,7 @@ class LocalDateTimeAttributeConverter implements AttributeConverter{
 
 
 class AuthenticationController{
-    - authenticationService: AuthenticationService
+    - AUTHENTICATION_SERVICE: AuthenticationService
     __
     + AuthenticationController(AuthenticationService)
     + register(User): ResponseEntity<String>
@@ -53,8 +53,8 @@ class AuthenticationResponse{
 }
 
 class AuthenticationService{
-    - passwordEncoder: PasswordEncoder 
-    - emailService: EmailService
+    - PASSWORD_ENCODER: PasswordEncoder 
+    - EMAIL_SERVICE: EmailService
     - authenticationManager: AuthenticationManager
     - userRepository: UserRepository
     - jwtService: JwtService
@@ -176,4 +176,431 @@ class Email{
     + setText(String)
 }
 
+class EmailService{
+    - MAIL_SENDER: 
+    __
+    + EmailService(JavaMailSender)
+    + sendEmail(Email):String
+}
+
+EmailService o-- JavaMailSender
+
+class AccountNotVerifiedException extends RuntimeException{
+    + AccountNotVerifiedException()
+}
+
+class TaskAlreadyExistException extends RuntimeException{
+    + TaskAlreadyExistException()
+}
+
+class TaskNotFoundException extends RuntimeException{
+    + TaskNotFoundException()
+}
+
+class UserAlreadyExistException extends RuntimeException{
+    + UserAlreadyExistException()
+}
+
+class UserNotFoundException extends RuntimeException{
+    + UserNotFoundException()
+}
+
+class HighlightController{
+    + HIGHLIGHT_SERVICE: HighlightService
+    __
+    + HighlightController(HighlightService)
+    + get(Long): ResponseEntity<?>
+}
+
+HighlightController o-- HighlightService
+
+class HighlightDTO{
+    - totalDurationOverall: Duration
+    - currentDayTotalDuration: Duration
+    - lastWeekTotalDuration: Duration
+    - currentWeekTotalDuration: Duration
+    __
+    + setTotalDurationOverall(Duration)
+    + setCurrentDayTotalDuration(Duration)
+    + setLastWeekTotalDuration(Duration)
+    + setCurrentWeekTotalDuration(Duration)
+    + getTotalDurationOverall(): String
+    + getCurrentDayTotalDuration(): String
+     getLastWeekTotalDuration():String
+    + getCurrentWeekTotalDuration(): String
+}
+
+class HighlightService{
+    ~ totalDurationOverallRepository: TotalDurationOverallRepository
+    ~ totalDurationPerDayRepository: TotalDurationPerDayRepository
+    ~ totalDurationPerWeekRepository: TotalDurationPerWeekRepository
+    __
+    + get(Long): HighlightDTO
+    - setLastWeekTotalDuration(HighlightDTO, Long)
+    - setCurrentWeekTotalDuration(HighlightDTO, Long)
+    - setCurrentDayTotalDuration(HighlightDTO, Long)
+    - setTotalDurationOverall(HighlightDTO, Long)
+}
+
+class Session {
+    - id: Long
+    - duration: Duration
+    - comment:String
+    - date: LocalDate
+    - task: Task
+    __
+    + getId(): Long
+    + setId(Long)
+    + getDuration(): Duration
+    + setDuration(Duration)
+    + getComment(): String
+    + setComment(String)
+    + getDate(): String
+    + getLocalDate(): LocalDate
+    + setDate(LocalDate)
+    + getTask(): Task
+    + setTask(Task)
+}
+
+class SessionController{
+    - SESSION_SERVICE: SessionService
+    __
+    + SessionController(SessionService)
+    + create(SessionCreateRequest): ResponseEntity<String>
+    + getTaskSessions(Long): ResponseEntity<?>
+    + delete(Long): ResponseEntity<String>
+}
+
+SessionController o-- SessionService
+
+class SessionCreateRequest {
+    - duration: String
+    - comment: String
+    - taskId: Long
+    - year: int
+    - month: int
+    - day: int
+    __
+    + getDuration(): String
+    + getComment(): String
+    + getTaskId(): Long
+    + getYear(): int
+    + getMonth(): int
+    + getDay(): int
+}
+
+class SessionDTO {
+    - id: Long
+    - duration: Duration
+    - comment: String
+    - date: String
+    - taskId: Long
+    __
+    + getId(): Long
+    + setId(Long)
+    + getDuration(): String
+    + setDuration(Duration)
+    + getComment(): String
+    + setComment(String)
+    + getDate(): String
+    + setDate(String)
+    + getTaskId(): Long
+    + setTaskId(Long)
+}
+
+interface SessionRepository extends JpaRepository{
+    + findByTaskId(Long): List<Session>
+    + findById(Long id): Optional<Session>
+}
+
+class SessionService{
+    ~ taskRepository: TaskRepository
+    ~ sessionRepository: SessionRepository
+    ~ totalDurationOverallRepository: TotalDurationOverallRepository
+    ~ totalDurationPerDayRepository: TotalDurationPerDayRepository
+    ~ totalDurationPerWeekRepository: TotalDurationPerWeekRepository
+    __
+    + create(SessionCreateRequest)
+    - updateTotalDurationOverall(User, Duration)
+    - createTotalDurationOverall(User, Duration)
+    - updateTotalDurationPerDay(User, Duration, LocalDate)
+    - createTotalDurationPerDay(User, Duration, LocalDate)
+    - updateTotalDurationPerWeek(User, Duration, LocalDate)
+    - createTotalDurationPerWeek(User, Duration, LocalDate)
+    - updateTaskTotalDuration(Task, Duration)
+    + getTaskSessions(Long): List<SessionDTO>
+    + delete(Long)
+    - decreaseTotalDurationOverall(User, Duration)
+    - decreaseTotalDurationPerDay(User, Duration, LocalDate)
+    - decreaseTotalDurationPerWeek(User, Duration, LocalDate)
+    - decreaseTaskTotalDuration(Task, Duration)
+}
+
+class Task {
+    - id: Long
+    - title: String
+    - dateCreated: LocalDateTime
+    - user: User
+    - state: TaskState
+    - sessions: List<Session>
+    - totalDuration: Duration
+    __
+    + getId(): Long
+    + setId(Long)
+    + getTitle(): String
+    + setTitle(String)
+    + getDateCreated(): LocalDateTime
+    + setDateCreated(LocalDateTime)
+    + getUser(): User
+    + setUser(User)
+    + getState(): TaskState
+    + setState(TaskState)
+    + getTotalDuration(): Duration
+    + setTotalDuration(Duration)
+}
+
+class TaskController{
+    - TASK_SERVICE: TaskService
+    __
+    + TaskController(TaskService)
+    + create(TaskCreateRequest): ResponseEntity<String>
+    + update(TaskUpdateRequest): ResponseEntity<String>
+    + getAll(Long): ResponseEntity<?>
+    + getAllActive(Long): ResponseEntity<?>
+}
+
+TaskController o-- TaskService
+
+class TaskCreateRequest {
+    - title: String
+    - userId: Long
+    __
+    + getTitle(): String
+    + getUserId(): Long
+}
+
+class TaskDTO {
+    - id: Long
+    - title: String
+    - dateCreated: LocalDateTime
+    - userId: Long
+    - state: TaskState
+    - totalDuration: Duration
+    __
+    + getId(): Long
+    + setId(Long id)
+    + getTitle(): String
+    + setTitle(String)
+    + getDateCreated(): String
+    + setDateCreated(LocalDateTime dateCreated)
+    + getUserId(): Long
+    + setUserId(Long)
+    + getState(): TaskState
+    + setState(TaskState)
+    + getTotalDuration(): String
+    + setTotalDuration(Duration)
+}
+
+interface TaskRepository extends JpaRepository {
+    + findByTitle(String): Optional<Task>
+    + findById(Long): Optional<Task>
+    + findByUserId(Long): List<Task>
+    + findByUserIdAndState(Long,TaskState): List<Task>
+}
+
+class TaskService{
+    ~ taskRepository: TaskRepository
+    ~ userRepository: UserRepository
+    __
+    + create(TaskCreateRequest)
+    + update(TaskUpdateRequest)
+    + getAll(Long): List<TaskDTO>
+    - toDTOs(List<Task>): List<TaskDTO>
+    + getAllActive(Long): List<TaskDTO>
+}
+
+enum TaskState {
+    INACTIVE
+    ACTIVE
+}
+
+class TaskUpdateRequest {
+    - title: String
+    - state: TaskState
+    - id: Long
+    __
+    + getTitle(): String
+    + getState(): TaskState
+    + getId(): Long
+}
+
+class TotalDurationOverall {
+    - id: Long
+    - user: User
+    - totalDuration: Duration
+    __
+    + getUser(): User
+    + setUser(User)
+    + getTotalDuration(): Duration
+    + setTotalDuration(Duration)
+}
+
+interface TotalDurationOverallRepository extends JpaRepository{
+    + findByUserId(Long): TotalDurationOverall
+}
+
+class TotalDurationPerDay {
+    - id: Long
+    - totalDuration: Duration
+    - date: LocalDate
+    - user: User
+    __
+    + getId(): Long
+    + setId(Long)
+    + getTotalDuration(): Duration
+    + setTotalDuration(Duration)
+    + getDate(): LocalDate
+    + setDate(LocalDate)
+    + getUser(): User
+    + setUser(User)
+}
+
+interface TotalDurationPerDayRepository extends JpaRepository {
+    + findByUserIdAndDate(Long, LocalDate): TotalDurationPerDay
+}
+
+class TotalDurationPerWeek {
+    - id: Long
+    - totalDuration: Duration
+    - startDate: LocalDate
+    - endDate: LocalDate
+    - user: User
+    __
+    + getId(): Long
+    + setId(Long)
+    + getTotalDuration(): Duration
+    + setTotalDuration(Duration)
+    + getStartDate(): LocalDate
+    + setStartDate(LocalDate)
+    + getEndDate(): LocalDate
+    + setEndDate(LocalDate)
+    + getUser(): User
+    + setUser(User)
+}
+
+interface TotalDurationPerWeekRepository extends JpaRepository {
+    + findByUserIdAndStartDateAndEndDate(Long, LocalDate, LocalDate): TotalDurationPerWeek
+}
+
+enum Permission {
+    SESSION_CREATE
+    SESSION_DELETE
+    TASK_CREATE
+    TASK_GET_ALL_FOR_USER_ID
+    TASK_GET_ALL_ACTIVE_FOR_USER_ID
+    TASK_UPDATE
+    HIGHLIGHT_GET
+    USER_DETAILS_GET_FOR_ID
+    DEMO_USER_LOGIN
+    DEMO_USER_CREATE
+    FORGOT_PASSWORD
+    RESET_PASSWORD
+    VERIFY_EMAIL
+    SESSION_TASK_LIST
+}
+
+enum Role {
+    ADMIN
+    USER
+    DEMO_USER
+    __
+    - permissions: List<Permission>
+    ~ Role(List<Permission>)
+    + getPermissions(): List<Permission>
+    + setPermissions(List<Permission>)
+}
+
+Role o-- Permission
+
+class User implements UserDetails {
+    - id: Long
+    - username: String
+    - email: String
+    - password: String
+    - dateJoined: LocalDateTime
+    - role: Role
+    - verificationCode: String
+    - verificationCodeExpiresAt: LocalDateTime
+    - enabled: boolean
+    - tasks: List<Task>
+    - totalDurationPerDays: List<TotalDurationPerDay>
+    - totalDurationPerWeeks: List<TotalDurationPerWeek>
+    __
+    + getVerificationCode(): String
+    + setVerificationCode(String)
+    + getVerificationCodeExpiresAt(): LocalDateTime
+    + setVerificationCodeExpiresAt(LocalDateTime)
+    + setEnabled(boolean)
+    + getId(): Long
+    + setId(Long)
+    + getUsername(): String
+    + setUsername(String)
+    + getPassword(): String
+    + setPassword(String)
+    + getRole(): Role
+    + setRole(Role)
+    + getEmail(): String
+    + setEmail(String)
+    + getDateJoined(): LocalDateTime
+    + setDateJoined(LocalDateTime)
+    + isAccountNonExpired(): boolean
+    + isAccountNonLocked(): boolean
+    + isCredentialsNonExpired(): boolean
+    + isEnabled(): boolean
+    + getAuthorities(): Collection<? extends GrantedAuthority>
+}
+
+class UserController {
+
+    - USER_SERVICE: UserService
+    __
+    + UserController(UserService)
+    + profile(Long): ResponseEntity<UserResponse>
+}
+
+UserController o-- UserService
+
+interface UserRepository extends JpaRepository {
+    + findByEmail(String): Optional<User>
+    + findById(Long): Optional<User>
+}
+
+class UserResponse {
+    - id: Long
+    - username: String
+    - email: String
+    - dateJoined: String
+    - role: Role
+    __
+    + getId(): Long
+    + setId(Long)
+    + getUsername(): String
+    + setUsername(String)
+    + getEmail(): String
+    + setEmail(String)
+    + getRole(): Role
+    + setRole(Role)
+    + getDateJoined(): String
+    + setDateJoined(String)
+}
+
+class UserService {
+    - UserRepository userRepository;
+    __
+    + profile(Long): UserResponse
+}
+
+class StudyTrackerApplication {
+	+ {static} main(String[])
+}
 @enduml
