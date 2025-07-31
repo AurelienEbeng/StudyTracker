@@ -1,0 +1,152 @@
+@startuml
+actor User
+participant Frontend
+activate Frontend
+User -> Frontend: Fill login credentials
+User -> Frontend: Click login button
+alt Is there an empty field?
+    note over Frontend: Display alert message
+else
+    Frontend -> Backend: Send user credentials
+end
+alt valid credentials?
+    Backend --> Frontend: Send AuthenticationResponse
+else
+    Backend --> Frontend: Send status 403
+    note over Frontend: Console log error
+    
+    note over Frontend
+    Load empty login page
+    end note
+end
+
+note over Frontend: Redirect to Highligt page
+alt Is User not logged in?
+    note over Frontend: Redirect to Login page
+end
+
+Frontend -> Backend: Request HighligthDTO
+Backend --> Frontend: Return HightlightDTO
+
+note over Frontend: Display Highlight page
+
+User -> Frontend: Click Task navigation bar item
+
+alt Is User not logged in?
+    note over Frontend: Redirect to Login page
+end
+
+Frontend -> Backend: Request a user's tasks
+Backend --> Frontend: Return a user's tasks
+note over Frontend: Display Task page
+
+User -> Frontend: Click New button
+note over Frontend: Redirect to New Task Page
+User -> Frontend: Fill new task title field
+User -> Frontend: Click Save button
+
+alt Is new task title field empty?
+    note over Frontend: Display alert message
+else
+    Frontend -> Backend: Request new task creation
+    Backend --> Frontend: Return status 200
+end
+note over Frontend: Redirect to Task page
+
+User -> Frontend: Click Update button
+note over Frontend: Redirect to Update Task Page
+User -> Frontend: Modify Task title
+User -> Frontend: Modify Task state
+User -> Frontend: Click Update button
+alt Is the task title empty?
+    note over Frontend: Display alert message
+else
+    Frontend -> Backend: Request update task
+    Backend --> Frontend: Return status 200
+end
+note over Frontend: Redirect to Task page
+
+User -> Frontend: Click New Session button
+note over Frontend: Redirect to New Session Page
+User -> Frontend: Fill duration fields
+User -> Frontend: Fill date field
+User -> Frontend: Fill comment field
+User -> Frontend: Click Save button
+alt Is session comment or day or month or year or duration or taskId empty?
+    note over Frontend: Display alert message to fill all fields
+else Is session comment more than 255 characters?
+    note over Frontend: Display alert message to rewrite the comment
+else 
+    Frontend -> Backend: Send session creation request
+    Backend --> Frontend: Send status 200
+end
+note over Frontend: Redirect to Task page
+
+User -> Frontend: Click List Sessions button
+note over Frontend: Redirect List Sessions Page
+alt Is User not logged in?
+    note over Frontend: Redirect to Login page
+end
+Frontend -> Backend: Request user's sessions
+Backend --> Frontend: Return user's sessions
+note over Frontend: Display List Sessions Page
+User -> Frontend: Click Delete button
+Frontend -> Backend: Request session deletion
+Backend --> Frontend: Send status 200
+note over Frontend: Redirect to Task Page
+
+User -> Frontend: Click navigation bar item Profile
+note over Frontend: Redirect to Profile page
+alt Is User not logged in?
+    note over Frontend: Redirect to Login page
+end
+
+Frontend -> Backend: Request User information
+Backend --> Frontend: Return User information
+note over Frontend: Display Profile page
+
+User -> Frontend: Click navigation bar item Logout
+note over Frontend: Redirect to Login Page
+
+User -> Frontend: Click Forgot your password link
+note over Frontend: Redirect to Forgot your password page
+User -> Frontend: Fill email field
+User -> Frontend: Click Send reset link button
+alt Is email field empty?
+    note over Frontend: Display alert message to fill form
+else
+    Frontend -> Backend: Send forgot password request
+    Backend --> Frontend: Return status 200
+    note over Frontend: Display alert message to check email
+end
+User -> Email: Click reset link
+note over Frontend: Redirect to Reset Password Page
+User -> Frontend: Fill password field
+User -> Frontend: Fill confirm password field
+User -> Frontend: Click Reset button
+alt Is password or confirm password empty?
+    note over Frontend: Display alert message to fill all fields
+else Is password different from confirm password?
+    note over Frontend: Display alert message password do not match
+else 
+    Frontend -> Backend: Send reset password request
+    Backend --> Frontend: Send 200 status
+end
+
+note over Frontend: On Login Page
+User -> Frontend: Click Sign up link
+note over Frontend: Redirect to Sign Up page
+User -> Frontend: Fill form fields
+User -> Frontend: Click Save button
+alt Is any field empty?
+    note over Frontend: Display alert message to fill all form fields
+else Is email invalid?
+    note over Frontend: Display alert message to enter a valid email
+else Is password and confirm password different?
+    note over Frontend: Display alert message that passwords do not match
+else
+    Frontend -> Backend: Send register user request
+    Backend --> Frontend: Send 200 status
+end
+deactivate Frontend
+@enduml
