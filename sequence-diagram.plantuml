@@ -160,9 +160,32 @@ Backend --> Frontend: Return List<SessionDTO>
 note over Frontend: Display List Sessions Page
 User -> Frontend: Click Delete button
 Frontend -> Backend: Request session deletion
+Backend -> DB: Request Session
+DB --> Backend: Return Session
 
 alt Does session exist?
     alt Does task exist?
+        Backend -> DB: Request Task
+        DB --> Backend: Return Task
+ 
+        Backend -> DB: Request User total duration overall
+        DB --> Backend: Return User total duration overall
+        note over Backend: Decrease total Duration overall
+        Backend -> DB: Save total duration overall
+
+        Backend -> DB: Request User total duration per day
+        DB --> Backend: Return User total duration per day
+        note over Backend: Decrease total Duration per day
+        Backend -> DB: Save total duration per day
+
+        note over Backend: Calculate beginning and end of week
+        Backend -> DB: Request User total duration per week
+        DB --> Backend: Return User total duration per week
+        note over Backend: Decrease total Duration per week
+        Backend -> DB: Save total duration per week
+
+        note over Backend: Decrease task total duration
+        Backend -> DB: Save task total duration 
         
     else
         note over Backend: Throw TaskNotFoundException
@@ -179,11 +202,14 @@ User -> Frontend: Click navigation bar item Profile
 note over Frontend: Redirect to Profile page
 alt Is User not logged in?
     note over Frontend: Redirect to Login page
-end
+else
 
 Frontend -> Backend: Request User information
-Backend --> Frontend: Return User information
+Backend -> DB: Request User information
+Backend <-- DB: Return User information
+Backend --> Frontend: Return UserResponse
 note over Frontend: Display Profile page
+end
 
 User -> Frontend: Click navigation bar item Logout
 note over Frontend: Redirect to Login Page
@@ -196,7 +222,18 @@ alt Is email field empty?
     note over Frontend: Display alert message to fill form
 else
     Frontend -> Backend: Send forgot password request
-    Backend --> Frontend: Return status 200
+    Backend -> DB: Request User
+    DB -> Backend: Return User
+    
+    alt Does User exist?
+        note over Backend: Generate reset token
+        Backend -> DB: Save reset token
+        note over Backend: Create email
+        Backend -> Email: Send email
+        Backend --> Frontend: Return status 200
+    else 
+        note over Backend: Throw UserNotFoundException
+    end
     note over Frontend: Display alert message to check email
 end
 User -> Email: Click reset link
@@ -210,7 +247,27 @@ else Is password different from confirm password?
     note over Frontend: Display alert message password do not match
 else 
     Frontend -> Backend: Send reset password request
-    Backend --> Frontend: Send 200 status
+    Backend -> DB: Request reset password token
+    Backend <-- DB: Return reset password token
+    
+    alt Does password token exist?
+        alt Has the token expired?
+            note over Backend:Throw RuntimeException("Token has expired")
+        else
+            Backend -> DB: Request User
+            DB -> Backend: Return User
+            
+            alt Does User exist?
+                note over Backend: Update Password
+                Backend -> DB: Delete token request
+                Backend --> Frontend: Send 200 status
+            else
+                note over Backend: Throw UserNotFoundException 
+            end 
+        end 
+    else
+        note over Backend: Throw RuntimeException("Token not found")
+    end
 end
 
 note over Frontend: On Login Page
@@ -226,7 +283,14 @@ else Is password and confirm password different?
     note over Frontend: Display alert message that passwords do not match
 else
     Frontend -> Backend: Send register user request
-    Backend --> Frontend: Send 200 status
+    
+    alt Does user exist?
+        note over Backend: Throw UserAlreadyExistException
+    else
+        note over Backend: Create User
+        Backend -> DB: Save User
+        Backend --> Frontend: Send 200 status
+    end 
 end
 deactivate Frontend
 @enduml
