@@ -1,0 +1,47 @@
+@startuml
+
+left to right direction
+actor User
+
+rectangle "Study Tracker" {
+    usecase "Register" as UC_Register
+    usecase "Log in" as UC_Login
+    usecase "Reset Password" as UC_ResetPwd
+    usecase "Log out" as UC_Logout
+    usecase "View Profile" as UC_ViewProfile
+    usecase "Create Task" as UC_CreateTask
+    usecase "Update Task" as UC_UpdateTask
+    usecase "Create Study Session" as UC_CreateSession
+    usecase "Delete Study Session" as UC_DeleteSession
+    usecase "View Sessions for Task" as UC_ViewSessions
+    usecase "Record Daily Study Time" as UC_RecordDay
+    usecase "Record Weekly Study Time" as UC_RecordWeek
+    usecase "Prevent Future Study Time Entry" as UC_PreventFuture
+    usecase "View Total Study Time" as UC_ViewTotal
+    usecase "View Daily Study Time" as UC_ViewDay
+    usecase "View Current Week Study Time" as UC_ViewCurrWeek
+    usecase "View Previous Week Study Time" as UC_ViewPrevWeek
+}
+
+User --> UC_Register
+User --> UC_Login
+User --> UC_ResetPwd
+User --> UC_Logout
+User --> UC_ViewProfile
+
+User --> UC_CreateTask
+User --> UC_UpdateTask
+User --> UC_CreateSession
+User --> UC_DeleteSession
+User --> UC_ViewSessions
+
+User --> UC_RecordDay
+User --> UC_RecordWeek
+User --> UC_PreventFuture
+
+User --> UC_ViewTotal
+User --> UC_ViewDay
+User --> UC_ViewCurrWeek
+User --> UC_ViewPrevWeek
+
+@enduml
