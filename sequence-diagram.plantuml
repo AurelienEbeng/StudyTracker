@@ -2,6 +2,7 @@
 actor User
 participant Frontend
 activate Frontend
+note over Frontend: On Login page
 User -> Frontend: Fill login credentials
 User -> Frontend: Click login button
 alt Is there an empty field?
@@ -10,6 +11,8 @@ else
     Frontend -> Backend: Send user credentials
 end
 alt valid credentials?
+    Backend -> DB: Request User
+    DB --> Backend: Return User
     Backend --> Frontend: Send AuthenticationResponse
 else
     Backend --> Frontend: Send status 403
@@ -25,19 +28,30 @@ alt Is User not logged in?
     note over Frontend: Redirect to Login page
 end
 
-Frontend -> Backend: Request HighligthDTO
+Frontend -> Backend: Request user's analytics
+Backend -> DB: Request user's total duration overall
+DB --> Backend: Return user's total duration overall
+Backend -> DB: Request user's total duration for today
+DB --> Backend: Return user's total duration for today
+Backend -> DB: Request user's last week total duration
+DB --> Backend: Return user's last week total duration
+Backend -> DB: Request user's current week total duration
+DB --> Backend: Return user's current week total duration
 Backend --> Frontend: Return HightlightDTO
 
 note over Frontend: Display Highlight page
 
 User -> Frontend: Click Task navigation bar item
+note over Frontend: Redirect to Task page
 
 alt Is User not logged in?
     note over Frontend: Redirect to Login page
 end
 
 Frontend -> Backend: Request a user's tasks
-Backend --> Frontend: Return a user's tasks
+Backend -> DB: Request a user's tasks
+DB --> Backend: Return a user's tasks
+Backend --> Frontend: Return List<TaskDTO>
 note over Frontend: Display Task page
 
 User -> Frontend: Click New button
@@ -49,6 +63,13 @@ alt Is new task title field empty?
     note over Frontend: Display alert message
 else
     Frontend -> Backend: Request new task creation
+    alt Does task exist?
+        note over Backend: Throw TaskAlreadyExistException
+    else
+        Backend -> DB: Request User
+        DB --> Backend: Return User
+        Backend -> DB: Save new task
+    end
     Backend --> Frontend: Return status 200
 end
 note over Frontend: Redirect to Task page
@@ -62,6 +83,12 @@ alt Is the task title empty?
     note over Frontend: Display alert message
 else
     Frontend -> Backend: Request update task
+    alt Does task exist?
+        note over Backend: Update task
+        Backend -> DB: Save task request
+    else
+        note over Backend: Throw TaskNotFoundException
+    end
     Backend --> Frontend: Return status 200
 end
 note over Frontend: Redirect to Task page
@@ -78,6 +105,45 @@ else Is session comment more than 255 characters?
     note over Frontend: Display alert message to rewrite the comment
 else 
     Frontend -> Backend: Send session creation request
+    alt Does task exist?
+        note over Backend: Create session
+        Backend -> DB: Save session
+
+        Backend -> DB: Request user's total duration overall
+        Backend <-- DB: Return user's total duration overall     
+        alt Is total duration overall null?
+            note over Backend: Create total duration overall
+            Backend -> DB: Save total duration overall
+        else 
+            note over Backend: Increase total duration overall
+            Backend -> DB: Save total duration overall
+        end
+
+        Backend -> DB: Request user's total duration per day
+        Backend <-- DB: Return user's total duration per day     
+        alt Is total duration per day null?
+            note over Backend: Create total duration per day
+            Backend -> DB: Save total duration per day
+        else 
+            note over Backend: Increase total duration per day
+            Backend -> DB: Save total duration per day
+        end
+
+        Backend -> DB: Request user's total duration per week
+        Backend <-- DB: Return user's total duration per week     
+        alt Is total duration per week null?
+            note over Backend: Create total duration per week
+            Backend -> DB: Save total duration per week
+        else 
+            note over Backend: Increase total duration per week
+            Backend -> DB: Save total duration per week
+        end
+        
+        note over Backend: Increase task duration
+        Backend -> DB: Save task
+    else 
+        note over Backend: Throw TaskNotFoundException
+    end
     Backend --> Frontend: Send status 200
 end
 note over Frontend: Redirect to Task page
@@ -87,11 +153,25 @@ note over Frontend: Redirect List Sessions Page
 alt Is User not logged in?
     note over Frontend: Redirect to Login page
 end
-Frontend -> Backend: Request user's sessions
-Backend --> Frontend: Return user's sessions
+Frontend -> Backend: Request a task sessions
+Backend -> DB: Request a task sessions
+Backend <-- DB: Return a task sessions
+Backend --> Frontend: Return List<SessionDTO>
 note over Frontend: Display List Sessions Page
 User -> Frontend: Click Delete button
 Frontend -> Backend: Request session deletion
+
+alt Does session exist?
+    alt Does task exist?
+        
+    else
+        note over Backend: Throw TaskNotFoundException
+    end
+
+else 
+    note over Backend: Throw RuntimeException("Session does not exist"))
+end
+
 Backend --> Frontend: Send status 200
 note over Frontend: Redirect to Task Page
 
