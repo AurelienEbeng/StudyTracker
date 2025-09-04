@@ -1,0 +1,75 @@
+@startuml
+
+entity "users" as users {
+  *id : bigint <<PK>>
+  --
+  date_joined : datetime(6)
+  email : varchar(255)
+  enabled : bit(1)
+  password : varchar(255)
+  role : enum('ADMIN','DEMO_USER','USER')
+  username : varchar(255)
+  verification_code : varchar(255)
+  verification_expiration : datetime(6)
+}
+
+entity "tasks" as tasks {
+  *id : bigint <<PK>>
+  --
+  date_created : datetime(6)
+  state : tinyint
+  title : varchar(255)
+  total_duration : decimal(21,0)
+  user_id : bigint <<FK>>
+}
+
+entity "sessions" as sessions {
+  *id : bigint <<PK>>
+  --
+  comment : varchar(255)
+  date : date
+  duration : decimal(21,0)
+  task_id : bigint <<FK>>
+}
+
+entity "password_reset_tokens" as tokens {
+  *id : int <<PK>>
+  --
+  expiry_date_time : datetime(6)
+  token : varchar(255)
+  user_id : bigint <<FK>>
+}
+
+entity "total_duration_overall" as overall_duration {
+  *id : bigint <<PK>>
+  --
+  total_duration : decimal(21,0)
+  user_id : bigint <<FK>>
+}
+
+entity "total_duration_per_day" as daily_duration {
+  *id : bigint <<PK>>
+  --
+  date : date
+  total_duration : decimal(21,0)
+  user_id : bigint <<FK>>
+}
+
+entity "total_duration_per_week" as weekly_duration {
+  *id : bigint <<PK>>
+  --
+  end_date : date
+  start_date : date
+  total_duration : decimal(21,0)
+  user_id : bigint <<FK>>
+}
+
+
+' Relationships
+users ||--o{ tasks : "creates"
+tasks ||--o{ sessions : "has"
+users ||--o{ overall_duration : "has"
+users ||--o{ daily_duration : "has"
+users ||--o{ weekly_duration : "has"
+users ||--o| tokens : "has"
+@enduml
