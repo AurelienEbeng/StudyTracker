@@ -8,10 +8,12 @@ User -> Frontend: Click login button
 alt Is there an empty field?
     note over Frontend: Display alert message
 else
+    activate Backend
     Frontend -> Backend: Send user credentials
 end
 alt valid credentials?
     Backend -> DB: Request User
+    activate DB
     DB --> Backend: Return User
     Backend --> Frontend: Send AuthenticationResponse
 else
@@ -230,6 +232,7 @@ else
         Backend -> DB: Save reset token
         note over Backend: Create email
         Backend -> Email: Send email
+        activate Email
         Backend --> Frontend: Return status 200
     else 
         note over Backend: Throw UserNotFoundException
@@ -237,6 +240,7 @@ else
     note over Frontend: Display alert message to check email
 end
 User -> Email: Click reset link
+deactivate Email
 note over Frontend: Redirect to Reset Password Page
 User -> Frontend: Fill password field
 User -> Frontend: Fill confirm password field
@@ -292,5 +296,7 @@ else
         Backend --> Frontend: Send 200 status
     end 
 end
+deactivate Backend
+deactivate Backend
 deactivate Frontend
 @enduml
