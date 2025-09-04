@@ -31,8 +31,21 @@
     - The previous week
 
   <br>
-    
-# Pictures
+
+# Class Diagram
+<img width="4096" height="2090" alt="class-diagram" src="https://github.com/user-attachments/assets/6021eada-ed0c-460d-9dc0-12fc41c7f8aa" />
+
+# Sequence Diagram
+<img width="898" height="4096" alt="sequence-diagram" src="https://github.com/user-attachments/assets/5f1f0846-8867-4390-a5af-72c3bc0beaa7" />
+
+# Use Case Diagram
+<img width="368" height="1289" alt="use-case-diagram" src="https://github.com/user-attachments/assets/7eda3a46-351d-49af-a700-c7bef7b23420" />
+
+# Database Entity Relationship Diagram
+<img width="1265" height="636" alt="db-entity-relationship" src="https://github.com/user-attachments/assets/159e34c5-2588-4f07-8383-a7ca6e7a4b73" />
+
+
+# Working Website
 
 The following pictures will be on desktop.
 
