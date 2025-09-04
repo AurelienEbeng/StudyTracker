@@ -33,7 +33,7 @@
   <br>
 
 # Class Diagram
-<img width="4096" height="2090" alt="class-diagram" src="https://github.com/user-attachments/assets/6021eada-ed0c-460d-9dc0-12fc41c7f8aa" />
+![class-diagram](https://github.com/user-attachments/assets/07d8815d-cc99-4263-bef2-02f653151e2d)
 
 # Sequence Diagram
 ![sequence-diagram](https://github.com/user-attachments/assets/02b0b7af-9578-4b35-9cca-85b44999311f)
