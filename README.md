@@ -39,6 +39,7 @@
 - CSS 
 - React JS  
 - Material UI (MUI)
+- TypeScript
 
 ## Backend
 - Java 
