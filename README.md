@@ -32,19 +32,37 @@
 
   <br>
 
+
+# Technologies Used
+## Frontend
+- HTML
+- CSS 
+- React JS  
+- Material UI (MUI)
+
+## Backend
+- Java 
+- Spring Boot
+
+## Database
+- MySQL
+<br>
+
 # Class Diagram
 ![class-diagram](https://github.com/user-attachments/assets/66a752cd-4673-47ee-955c-f5ffae8bf0e0)
-
+<br>
 
 # Sequence Diagram
 ![sequence-diagram](https://github.com/user-attachments/assets/02b0b7af-9578-4b35-9cca-85b44999311f)
+<br>
 
 # Use Case Diagram
 <img width="368" height="1289" alt="use-case-diagram" src="https://github.com/user-attachments/assets/7eda3a46-351d-49af-a700-c7bef7b23420" />
+<br>
 
 # Database Entity Relationship Diagram
 <img width="1265" height="636" alt="db-entity-relationship" src="https://github.com/user-attachments/assets/159e34c5-2588-4f07-8383-a7ca6e7a4b73" />
-
+<br>
 
 # Working Website
 
