@@ -64,5 +64,3 @@
 # Database Entity Relationship Diagram
 <img width="1265" height="636" alt="db-entity-relationship" src="https://github.com/user-attachments/assets/159e34c5-2588-4f07-8383-a7ca6e7a4b73" />
 <br>
-
-Checkout demo on [LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7414355478614544385/)
